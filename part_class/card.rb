@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class Card
-  attr_reader :num, :suit
+  attr_reader :number, :suit, :rank
 
   @@NUMBER_TABLE = {
     1 => "A",
