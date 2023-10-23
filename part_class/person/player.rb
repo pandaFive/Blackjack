@@ -33,7 +33,7 @@ class Player < Person
     if score > 21
       @state = "bust"
 
-      puts "#{@name} was busted"
+      puts "#{@name}はbustしました"
     end
   end
 end
