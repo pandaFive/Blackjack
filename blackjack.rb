@@ -20,6 +20,8 @@ class Blackjack
       handle_game_flow(initial_phase)
     elsif phase == "player"
       handle_game_flow(player_phase)
+    elsif phase == "dealer"
+      handle_game_flow(dealer_phase)
     else
       puts "ブラックジャックを終了します。"
     end
@@ -41,7 +43,7 @@ class Blackjack
       decide = @table.player.decide_action
       if decide == "Hit"
         @table.deal_out_card(@table.player)
-        decide = "" if @table.player.state == "bust"
+        break if @table.player.state == "bust"
       end
       sleep SLEEP_SECOND
     end
@@ -51,6 +53,26 @@ class Blackjack
     end
 
     "dealer"
+  end
+
+  def dealer_phase
+    dealer = @table.dealer
+
+    dealer.show_second_card
+    sleep SLEEP_SECOND
+
+    decide = "Hit"
+    while decide == "Hit"
+      dealer.put_score
+      decide = dealer.decide_action
+      if decide == "Hit"
+        @table.deal_out_card(dealer)
+        break if dealer.state == "bust"
+      end
+      sleep SLEEP_SECOND
+    end
+
+    "attribute"
   end
 end
 
