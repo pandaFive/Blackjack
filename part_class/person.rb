@@ -38,4 +38,8 @@ class Person
   def to_s
     "#{@name}: #{@state}"
   end
+
+  def is_bust?
+    hands.calculate_score > 21
+  end
 end

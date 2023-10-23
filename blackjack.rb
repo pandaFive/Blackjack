@@ -22,6 +22,8 @@ class Blackjack
       handle_game_flow(player_phase)
     elsif phase == "dealer"
       handle_game_flow(dealer_phase)
+    elsif phase == "attribute"
+      handle_game_flow(attribute_win_lose_phase)
     else
       puts "ブラックジャックを終了します。"
     end
@@ -74,7 +76,34 @@ class Blackjack
 
     "attribute"
   end
+
+  def attribute_win_lose_phase
+    player = @table.player
+    dealer = @table.dealer
+    if player.is_bust?
+      puts "#{player.name}はbustしました。あなたの負けです。"
+    elsif dealer.is_bust?
+      puts "#{dealer.name}がbustしました。あなたの勝ちです！"
+    else
+      player_score = player.hands.calculate_score
+      dealer_score = dealer.hands.calculate_score
+      puts "#{player.name}の得点は#{player_score}点です。"
+      sleep SLEEP_SECOND
+      puts "#{dealer.name}の得点は#{dealer_score}点です。"
+      sleep SLEEP_SECOND
+
+      if player_score > dealer_score
+        puts "#{player.name}の勝ちです！"
+      elsif player_score < dealer_score
+        puts "#{player.name}の負けです。"
+      else
+        puts "引き分けです。"
+      end
+    end
+    sleep SLEEP_SECOND
+    "end"
+  end
 end
 
-# blackjack = Blackjack.new
-# blackjack.handle_game_flow("initial")
+blackjack = Blackjack.new
+blackjack.handle_game_flow("initial")
