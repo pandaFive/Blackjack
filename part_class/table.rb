@@ -20,10 +20,8 @@ class Table
 
   def initial_deal
     1.upto(2) do |num|
-      deal_out_card(@dealer)
+      @dealer.initial_receive(@deck.deal_out)
       deal_out_card(@player)
-      sleep SLEEP_SECOND
     end
-    @dealer.show_up_card
   end
 end

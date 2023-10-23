@@ -8,7 +8,7 @@ class Deck
   end
 
   def create_deck
-    %w["スペード", "クラブ", "ハート", "ダイヤ"].reduce([]) do |deck, suit|
+    %w[スペード クラブ ハート ダイヤ].reduce([]) do |deck, suit|
       suit_part = (1..13).reduce([]) do |part, rank|
         part.push(Card.new(rank, suit))
       end

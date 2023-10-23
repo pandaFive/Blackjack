@@ -1,3 +1,3 @@
 # frozen_string_literal: true
 
-SLEEP_SECOND = 2
+SLEEP_SECOND = 1.4

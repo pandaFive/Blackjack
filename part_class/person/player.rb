@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require_relative "../../config/application.rb"
 require_relative "../person.rb"
 
 class Player < Person
@@ -26,14 +27,16 @@ class Player < Person
   def receive_card(card)
     @hands.add_card(card)
 
-    puts "#{@name}が引いたカードは#{card}です"
+    puts "#{@name}が引いたカードは#{card}です。"
 
     score = @hands.calculate_score
 
     if score > 21
       @state = "bust"
 
-      puts "#{@name}はbustしました"
+      puts "#{@name}はbustしました。"
     end
+
+    sleep SLEEP_SECOND
   end
 end
