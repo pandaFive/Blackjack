@@ -26,6 +26,6 @@ class Card
   end
 
   def to_s
-    "[#{@rank} #{@number} #{@suit}]"
+    "#{@suit}の#{@number}"
   end
 end
