@@ -3,6 +3,7 @@
 require_relative "./card.rb"
 
 class Hands
+  attr_reader :hands
   def initialize
     @hands = []
   end
@@ -34,6 +35,10 @@ class Hands
     else
       score
     end
+  end
+
+  def empty?
+    @hands.empty?
   end
 
   def to_s
