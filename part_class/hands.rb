@@ -41,6 +41,10 @@ class Hands
     @hands.empty?
   end
 
+  def has_A?
+    hands.any? { |card| card.rank == 1 }
+  end
+
   def to_s
     @hands.reduce("") do |result, card|
       result + "#{card.suit}の#{card.number} "
