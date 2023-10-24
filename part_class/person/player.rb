@@ -8,6 +8,20 @@ class Player < Person
     super("あなた")
   end
 
+  def bet
+    score_call
+    sleep SLEEP_SECOND
+    puts "1~#{chip}の範囲で賭けるポイントを入力してください："
+    bet_amount = gets.chomp.to_i
+
+    while bet_amount < 1 || bet_amount > chip
+      puts "1~#{chip}の範囲で賭けるポイントを入力してください："
+      bet_amount = gets.chomp.to_i
+    end
+    @chip -= bet_amount
+    @bets = bet_amount
+  end
+
   def decide_action
     puts "#{@name}の現在の得点は#{@hands.calculate_score}です。カードを引きますか？：(y/n)"
     decide = gets.chomp

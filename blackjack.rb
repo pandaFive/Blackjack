@@ -19,6 +19,8 @@ class Blackjack
     case phase
     when "initial"
       handle_game_flow(initial_phase)
+    when "bet"
+      handle_game_flow(bet_phase)
     when "player"
       handle_game_flow(player_phase)
     when "dealer"
@@ -34,6 +36,14 @@ class Blackjack
     puts "ブラックジャックを開始します。"
     sleep SLEEP_SECOND
     @table.initial_deal
+
+    "bet"
+  end
+
+  def bet_phase
+    sleep SLEEP_SECOND
+
+    @table.players.each { |player| player.bet }
 
     "player"
   end
@@ -67,8 +77,21 @@ class Blackjack
     results = @table.players.reduce([]) { |array, player| array.push(@table.determine_winner(player)) }
 
     notice_result(results)
+    settle_bets(results)
     sleep SLEEP_SECOND
     "end"
+  end
+
+  def settle_bets(results)
+    results.each do |result|
+      person = result[:person]
+      if result[:is_win]
+        person.add_chip(person.bets * 2)
+      elsif result[:is_win] == nil
+        person.add_chip(person.bets)
+      end
+      person.reset_bets
+    end
   end
 
   def notice_result(results)
