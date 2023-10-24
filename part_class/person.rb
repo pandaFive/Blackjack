@@ -26,7 +26,7 @@ class Person
 
     score = @hands.calculate_score
 
-    if score > 21
+    if score > NUMBER_OF_BLACKJACK
       @state = "bust"
 
       puts "#{@name}はbustしました。"
@@ -39,7 +39,11 @@ class Person
     "#{@name}: #{@state}"
   end
 
+  def score_call
+    puts "#{@name}の現在の得点は#{@hands.calculate_score}点です。"
+  end
+
   def is_bust?
-    hands.calculate_score > 21
+    hands.calculate_score > NUMBER_OF_BLACKJACK
   end
 end

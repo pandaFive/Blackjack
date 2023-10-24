@@ -16,13 +16,14 @@ class Blackjack
   end
 
   def handle_game_flow(phase)
-    if phase == "initial"
+    case phase
+    when "initial"
       handle_game_flow(initial_phase)
-    elsif phase == "player"
+    when "player"
       handle_game_flow(player_phase)
-    elsif phase == "dealer"
+    when "dealer"
       handle_game_flow(dealer_phase)
-    elsif phase == "attribute"
+    when "attribute"
       handle_game_flow(attribute_win_lose_phase)
     else
       puts "ブラックジャックを終了します。"
@@ -40,19 +41,8 @@ class Blackjack
   def player_phase
     sleep SLEEP_SECOND
 
-    decide = "Hit"
-    while decide == "Hit"
-      decide = @table.player.decide_action
-      if decide == "Hit"
-        @table.deal_out_card(@table.player)
-        break if @table.player.state == "bust"
-      end
-      sleep SLEEP_SECOND
-    end
-
-    if @table.player.state == "bust"
-      "attribute"
-    end
+    # アクション選択を繰り返す処理
+    @table.repeated_decide(@table.player)
 
     "dealer"
   end
@@ -62,43 +52,25 @@ class Blackjack
 
     dealer.show_second_card
     sleep SLEEP_SECOND
+    dealer.score_call
 
-    decide = "Hit"
-    while decide == "Hit"
-      dealer.put_score
-      decide = dealer.decide_action
-      if decide == "Hit"
-        @table.deal_out_card(dealer)
-        break if dealer.state == "bust"
-      end
-      sleep SLEEP_SECOND
-    end
+    # ゲーム進行上必要な処理遅延
+    sleep SLEEP_SECOND
+
+    # アクション選択を繰り返す処理
+    @table.repeated_decide(dealer)
 
     "attribute"
   end
 
   def attribute_win_lose_phase
-    player = @table.player
-    dealer = @table.dealer
-    if player.is_bust?
-      puts "#{player.name}はbustしました。あなたの負けです。"
-    elsif dealer.is_bust?
-      puts "#{dealer.name}がbustしました。あなたの勝ちです！"
+    result = @table.determine_winner(@table.player)
+    if result[:is_bust]
+      puts result[:message]
     else
-      player_score = player.hands.calculate_score
-      dealer_score = dealer.hands.calculate_score
-      puts "#{player.name}の得点は#{player_score}点です。"
-      sleep SLEEP_SECOND
-      puts "#{dealer.name}の得点は#{dealer_score}点です。"
-      sleep SLEEP_SECOND
-
-      if player_score > dealer_score
-        puts "#{player.name}の勝ちです！"
-      elsif player_score < dealer_score
-        puts "#{player.name}の負けです。"
-      else
-        puts "引き分けです。"
-      end
+      puts "#{@table.player.name}の得点は#{@table.calculate_score(@table.player)}点でした。"
+      puts "ディーラーの得点は#{@table.calculate_score(@table.dealer)}点でした。"
+      puts result[:message]
     end
     sleep SLEEP_SECOND
     "end"
