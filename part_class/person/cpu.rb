@@ -8,6 +8,15 @@ class CPU < Person
     super("CPU#{name_number}")
   end
 
+  def bet
+    sleep SLEEP_SECOND
+    lower_limit = (chip / 100).floor.to_i
+    upper_limit = (chip / 10).floor.to_i
+    @bets = rand(lower_limit..upper_limit)
+    @chip -= @bets
+    puts "#{name}は#{@bets}ポイントベットした。"
+  end
+
   def decide_action(up_card_score)
     score_call
     sleep SLEEP_SECOND

@@ -59,19 +59,19 @@ class Table
     dealer_score = calculate_score(@dealer)
     # personがbustしてpersonの負け
     if person.is_bust?
-      { is_winner: false, is_bust: true, message: "#{person.name}はbustしました。#{person.name}の負けです。" }
+      { is_win: false, person: person, is_bust: true, message: "#{person.name}はbustしました。#{person.name}の負けです。" }
     # dealerがbustしてpersonの勝ち
     elsif @dealer.is_bust?
-      { is_winner: true, is_bust: true, message: "#{@dealer.name}はbustしました。#{person.name}の勝ちです！" }
+      { is_win: true, person: person, is_bust: true, message: "#{@dealer.name}はbustしました。#{person.name}の勝ちです！#{person.bets * 2}ポイント獲得します。" }
     # 双方bustせず点数比較でpersonが勝ち
     elsif person_score > dealer_score
-      { is_winner: true, is_bust: false, message: "#{person.name}の得点は#{person_score}点でした。#{person.name}の勝ちです。" }
+      { is_win: true, person: person, is_bust: false, message: "#{person.name}の得点は#{person_score}点でした。#{person.name}の勝ちです。#{person.bets * 2}ポイント獲得します。" }
     # 点数比較でdealerが勝ち
     elsif person_score < dealer_score
-      { is_winner: false, is_bust: false, message: "#{person.name}の得点は#{person_score}点でした。#{person.name}の負けです。" }
+      { is_win: false, person: person, is_bust: false, message: "#{person.name}の得点は#{person_score}点でした。#{person.name}の負けです。" }
     # 引き分け
     else
-      { winner: nil, is_bust: false, message: "#{person.name}と#{@dealer.name}は同じ点数でした。引き分けです。" }
+      { is_win: nil, person: person, is_bust: false, message: "#{person.name}と#{@dealer.name}は同じ点数でした。引き分けです。" }
     end
   end
 

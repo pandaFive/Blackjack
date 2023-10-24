@@ -4,11 +4,26 @@ require_relative "../config/application.rb"
 require_relative "./hands.rb"
 
 class Person
-  attr_reader :name, :state, :hands
+  attr_reader :name, :state, :hands, :chip, :bets
   def initialize(name)
     @name = name
     @state = "init"
     @hands = Hands.new
+    @chip = 10000
+    @bets = 0
+  end
+
+  def bet(bet_amount)
+    @bets = bet_amount
+    @chip -= bet_amount
+  end
+
+  def reset_bets
+    @bets = 0
+  end
+
+  def add_chip(point)
+    @chip += point
   end
 
   def decide_action
