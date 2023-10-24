@@ -20,7 +20,7 @@ class Dealer < Person
   end
 
   def get_up_card_score
-    score = hands.hands[0].number
+    score = hands.hands[0].rank
     if score == 1
       11
     else

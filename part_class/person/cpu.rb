@@ -10,6 +10,7 @@ class CPU < Person
 
   def decide_action(up_card_score)
     score_call
+    sleep SLEEP_SECOND
     if hands.has_A?
       soft_hand_decide(up_card_score)
     else

@@ -42,7 +42,7 @@ class Blackjack
     sleep SLEEP_SECOND
 
     # アクション選択を繰り返す処理
-    @table.repeated_decide(@table.player)
+    @table.players.each { |player| @table.repeated_decide(player) }
 
     "dealer"
   end
@@ -64,16 +64,20 @@ class Blackjack
   end
 
   def attribute_win_lose_phase
-    result = @table.determine_winner(@table.player)
-    if result[:is_bust]
-      puts result[:message]
-    else
-      puts "#{@table.player.name}の得点は#{@table.calculate_score(@table.player)}点でした。"
-      puts "ディーラーの得点は#{@table.calculate_score(@table.dealer)}点でした。"
-      puts result[:message]
-    end
+    results = @table.players.reduce([]) { |array, player| array.push(@table.determine_winner(player)) }
+
+    notice_result(results)
     sleep SLEEP_SECOND
     "end"
+  end
+
+  def notice_result(results)
+    puts "ディーラーの得点は#{@table.calculate_score(@table.dealer)}点でした。"
+    sleep SLEEP_SECOND
+    results.each do |result|
+      puts result[:message]
+      sleep SLEEP_SECOND
+    end
   end
 end
 
