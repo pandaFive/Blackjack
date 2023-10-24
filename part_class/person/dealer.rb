@@ -22,8 +22,4 @@ class Dealer < Person
   def show_second_card
     puts "ディーラーの引いた2枚目のカードは#{@hands.hands[1]}でした。"
   end
-
-  def put_score
-    puts "ディーラーの現在の得点は#{@hands.calculate_score}です。"
-  end
 end

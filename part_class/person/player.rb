@@ -31,7 +31,7 @@ class Player < Person
 
     score = @hands.calculate_score
 
-    if score > 21
+    if score > NUMBER_OF_BLACKJACK
       @state = "bust"
 
       puts "#{@name}はbustしました。"
