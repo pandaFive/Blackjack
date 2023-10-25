@@ -19,7 +19,9 @@ class GameResult
     end
 
     def create_result(dealer, player)
-      if player.is_bust?
+      if player.state == "Surrender"
+        set_result(nil, "#{player.name}はSurrenderしている。betしたポイントの半分が戻ってきます。")
+      elsif player.is_bust?
         set_result(false, "#{player.name}はbustしました。#{player.name}の負けです。")
       elsif dealer.is_bust?
         set_result(true, "#{dealer.name}はbustしました。#{player.name}の勝ちです！")

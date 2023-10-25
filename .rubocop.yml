@@ -1,5 +1,5 @@
 require:
-  - rubocop-minitest
+  # - rubocop-minitest
   - rubocop-packaging
   - rubocop-performance
   - rubocop-md
@@ -336,23 +336,23 @@ Performance/RedundantStringChars:
 Performance/StringInclude:
   Enabled: true
 
-Minitest/AssertPredicate:
-  Enabled: true
+# Minitest/AssertPredicate:
+#   Enabled: true
 
-Minitest/AssertRaisesWithRegexpArgument:
-  Enabled: true
+# Minitest/AssertRaisesWithRegexpArgument:
+#   Enabled: true
 
-Minitest/AssertWithExpectedArgument:
-  Enabled: true
+# Minitest/AssertWithExpectedArgument:
+#   Enabled: true
 
-Minitest/LiteralAsActualArgument:
-  Enabled: true
+# Minitest/LiteralAsActualArgument:
+#   Enabled: true
 
-Minitest/SkipEnsure:
-  Enabled: true
+# Minitest/SkipEnsure:
+#   Enabled: true
 
-Minitest/UnreachableAssertion:
-  Enabled: true
+# Minitest/UnreachableAssertion:
+#   Enabled: true
 
 Markdown:
   # Whether to run RuboCop against non-valid snippets

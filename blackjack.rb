@@ -73,7 +73,7 @@ class Blackjack
 
   def attribute_win_lose_phase
     # results = @table.players.reduce([]) { |array, player| array.push(@table.determine_winner(player)) }
-    results = @table.players.reduce([]) { |array, player| array.push(GameResult.new(@table.dealer, player))}
+    results = @table.players.reduce([]) { |array, player| array.push(GameResult.new(@table.dealer, player)) }
 
     print_game_result(results)
     calculate_bet_payment(results)
@@ -86,10 +86,16 @@ class Blackjack
       person = result.person
       if result.is_win
         person.add_chip(person.bets * 2)
+      # 引き分けかSurrender
       elsif result.is_win == nil
-        person.add_chip(person.bets)
+        if person.state == "Surrender"
+          person.add_chip((person.bets / 2).to_i)
+        else
+          person.add_chip(person.bets)
+        end
       end
       person.reset_bets
+      person.show_points
     end
   end
 
