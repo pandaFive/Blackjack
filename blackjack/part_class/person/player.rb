@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require_relative "../../config/application.rb"
+require_relative "../../../config/application.rb"
 require_relative "../person.rb"
 
 class Player < Person

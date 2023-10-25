@@ -37,6 +37,10 @@ class Hands
     end
   end
 
+  def clear_hand
+    @hands = []
+  end
+
   def empty?
     @hands.empty?
   end
