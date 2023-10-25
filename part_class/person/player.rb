@@ -23,19 +23,20 @@ class Player < Person
   end
 
   def decide_action
-    puts "#{@name}の現在の得点は#{@hands.calculate_score}です。カードを引きますか？：(y/n)"
+    available_options = get_available_options
+    puts "#{@name}の現在の得点は#{@hands.calculate_score}です。行動を選択してください(#{ available_options.join("/") })："
     decide = gets.chomp
 
-    while decide != "y" && decide != "n"
-      puts "yかnを入力してください。："
+    while !action_validator(decide)
+      puts "次の選択肢の中から入力してください。(#{available_options.join("/")})："
       decide = gets.chomp
     end
 
-    if decide == "y"
-      "Hit"
-    else
-      "Stand"
-    end
+    @action_count += 1
+
+    @state = decide
+
+    decide
   end
 
   def receive_card(card)
@@ -53,4 +54,17 @@ class Player < Person
 
     sleep SLEEP_SECOND
   end
+
+  private
+    def get_available_options
+      actions = ["Hit", "Stand"]
+      if @action_count.zero?
+        actions.concat(["Surrender"])
+      end
+      actions
+    end
+
+    def action_validator(input)
+      get_available_options.include?(input)
+    end
 end

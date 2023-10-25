@@ -11,11 +11,16 @@ class Person
     @hands = Hands.new
     @chip = 10000
     @bets = 0
+    @action_count = 0
   end
 
   def bet(bet_amount)
     @bets = bet_amount
     @chip -= bet_amount
+  end
+
+  def show_points
+    puts "#{name}の現在の所持ポイントは#{chip}です。"
   end
 
   def reset_bets

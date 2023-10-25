@@ -30,22 +30,27 @@ class CPU < Person
   private
     def hard_hand_decide(up_card_score)
       score = hands.calculate_score
-      if score <= 11
+      decide = if score <= 11
         "Hit"
       elsif score >= 17
         "Stand"
-      elsif up_card_score > 7
+      elsif @action_count == 0 && up_card_score >= 9 && score == 16
+        "Surrender"
+      elsif up_card_score >= 7
         "Hit"
       else
         "Stand"
       end
+      @state = decide
+
+      decide
     end
 
     # 手札にあるAを11として扱う場合のアクション
     def soft_hand_decide(up_card_score)
       score = hands.calculate_score
 
-      if score <= 17
+      decide = if score <= 17
         "Hit"
       elsif score >= 19
         "Stand"
@@ -54,5 +59,9 @@ class CPU < Person
       else
         "Stand"
       end
+
+      @state = decide
+
+      decide
     end
 end
