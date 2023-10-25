@@ -5,12 +5,13 @@ require_relative "./person/dealer.rb"
 require_relative "./person/player.rb"
 require_relative "./person/cpu.rb"
 require_relative "./deck.rb"
+require_relative "./game_result.rb"
 
 class Table
   attr_reader :dealer, :players
   def initialize
     @dealer = Dealer.new
-    @players = create_players(3)
+    @players = create_players(2)
     @deck = Deck.new
     @deck.shuffle_deck
   end
@@ -50,28 +51,6 @@ class Table
       else
         break
       end
-    end
-  end
-
-  # personがdealerに勝利したのかを返す。またその勝敗にbustが関係しているのかを返す。
-  def determine_winner(person)
-    person_score = calculate_score(person)
-    dealer_score = calculate_score(@dealer)
-    # personがbustしてpersonの負け
-    if person.is_bust?
-      { is_win: false, person: person, is_bust: true, message: "#{person.name}はbustしました。#{person.name}の負けです。" }
-    # dealerがbustしてpersonの勝ち
-    elsif @dealer.is_bust?
-      { is_win: true, person: person, is_bust: true, message: "#{@dealer.name}はbustしました。#{person.name}の勝ちです！#{person.bets * 2}ポイント獲得します。" }
-    # 双方bustせず点数比較でpersonが勝ち
-    elsif person_score > dealer_score
-      { is_win: true, person: person, is_bust: false, message: "#{person.name}の得点は#{person_score}点でした。#{person.name}の勝ちです。#{person.bets * 2}ポイント獲得します。" }
-    # 点数比較でdealerが勝ち
-    elsif person_score < dealer_score
-      { is_win: false, person: person, is_bust: false, message: "#{person.name}の得点は#{person_score}点でした。#{person.name}の負けです。" }
-    # 引き分け
-    else
-      { is_win: nil, person: person, is_bust: false, message: "#{person.name}と#{@dealer.name}は同じ点数でした。引き分けです。" }
     end
   end
 
