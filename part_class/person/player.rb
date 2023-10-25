@@ -9,7 +9,6 @@ class Player < Person
   end
 
   def bet
-    score_call
     sleep SLEEP_SECOND
     puts "1~#{chip}の範囲で賭けるポイントを入力してください："
     bet_amount = gets.chomp.to_i
@@ -58,9 +57,8 @@ class Player < Person
   private
     def get_available_options
       actions = ["Hit", "Stand"]
-      if @action_count.zero?
-        actions.concat(["Surrender"])
-      end
+      actions.push("Surrender") if @action_count.zero?
+      actions.push("Double Down") if can_double_down?
       actions
     end
 

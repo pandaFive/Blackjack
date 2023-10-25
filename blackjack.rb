@@ -7,14 +7,14 @@ require_relative "./part_class/game_result.rb"
 class Blackjack
   def initialize
     @table = Table.new
-    @phase = "initial"
+    @phase = "bet"
   end
 
   def handle_game_flow
     while true
       case @phase
       when "initial"
-        @phase = initial_phase
+        @phase = initial_deal_phase
       when "bet"
         @phase = bet_phase
       when "player"
@@ -30,20 +30,21 @@ class Blackjack
     end
   end
 
-  def initial_phase
-    puts "ブラックジャックを開始します。"
+  def initial_deal_phase
+    puts "最初の手札を配ります。"
     sleep SLEEP_SECOND
     @table.initial_deal
 
-    "bet"
+    "player"
   end
 
   def bet_phase
+    puts "ブラックジャックを開始します。"
     sleep SLEEP_SECOND
 
     @table.players.each { |player| player.bet }
 
-    "player"
+    "initial"
   end
 
   def player_phase
@@ -96,6 +97,7 @@ class Blackjack
       end
       person.reset_bets
       person.show_points
+      sleep SLEEP_SECOND
     end
   end
 
