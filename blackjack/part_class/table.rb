@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require_relative "../config/application.rb"
+require_relative "../../config/application.rb"
 require_relative "./person/dealer.rb"
 require_relative "./person/player.rb"
 require_relative "./person/cpu.rb"
@@ -12,14 +12,14 @@ class Table
   def initialize
     @dealer = Dealer.new
     @players = create_players(2)
-    @deck = Deck.new
-    @deck.shuffle_deck
   end
 
-  def create_players(number)
-    players = [Player.new]
-    1.upto(number) { |num| players.push(CPU.new(num)) }
-    players
+  def initialize_table
+    @deck = Deck.new
+    @deck.shuffle_deck
+
+    @dealer.initialize_person
+    players.each { |player| player.initialize_person }
   end
 
   def deal_out_card(person)
@@ -62,4 +62,11 @@ class Table
   def calculate_score(person)
     person.hands.calculate_score
   end
+
+  private
+    def create_players(number)
+      players = [Player.new]
+      1.upto(number) { |num| players.push(CPU.new(num)) }
+      players
+    end
 end

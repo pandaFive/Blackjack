@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require_relative "../config/application.rb"
+require_relative "../../config/application.rb"
 require_relative "./hands.rb"
 
 class Person
@@ -26,6 +26,12 @@ class Person
 
   def can_double_down?
     @action_count.zero? && chip >= bets
+  end
+
+  def initialize_person
+    hands.clear_hand
+    @action_count = 0
+    reset_bets
   end
 
   def show_points
