@@ -1,13 +1,8 @@
 # frozen_string_literal: true
 
-# 末尾呼び出し最適化を試す。いったん脇に置いておく。
-# RubyVM::InstructionSequence.compile_option = {
-#   tailcall_optimization: true,
-#   trace_instruction: false
-# }
-
 require_relative "./config/application.rb"
 require_relative "./part_class/table.rb"
+require_relative "./part_class/game_result.rb"
 
 class Blackjack
   def initialize
@@ -15,20 +10,23 @@ class Blackjack
     @phase = "initial"
   end
 
-  def handle_game_flow(phase)
-    case phase
-    when "initial"
-      handle_game_flow(initial_phase)
-    when "bet"
-      handle_game_flow(bet_phase)
-    when "player"
-      handle_game_flow(player_phase)
-    when "dealer"
-      handle_game_flow(dealer_phase)
-    when "attribute"
-      handle_game_flow(attribute_win_lose_phase)
-    else
-      puts "ブラックジャックを終了します。"
+  def handle_game_flow
+    while true
+      case @phase
+      when "initial"
+        @phase = initial_phase
+      when "bet"
+        @phase = bet_phase
+      when "player"
+        @phase = player_phase
+      when "dealer"
+        @phase = dealer_phase
+      when "attribute"
+        @phase = attribute_win_lose_phase
+      else
+        puts "ブラックジャックを終了します。"
+        return
+      end
     end
   end
 
@@ -74,35 +72,36 @@ class Blackjack
   end
 
   def attribute_win_lose_phase
-    results = @table.players.reduce([]) { |array, player| array.push(@table.determine_winner(player)) }
+    # results = @table.players.reduce([]) { |array, player| array.push(@table.determine_winner(player)) }
+    results = @table.players.reduce([]) { |array, player| array.push(GameResult.new(@table.dealer, player))}
 
-    notice_result(results)
-    settle_bets(results)
+    print_game_result(results)
+    calculate_bet_payment(results)
     sleep SLEEP_SECOND
     "end"
   end
 
-  def settle_bets(results)
+  def calculate_bet_payment(results)
     results.each do |result|
-      person = result[:person]
-      if result[:is_win]
+      person = result.person
+      if result.is_win
         person.add_chip(person.bets * 2)
-      elsif result[:is_win] == nil
+      elsif result.is_win == nil
         person.add_chip(person.bets)
       end
       person.reset_bets
     end
   end
 
-  def notice_result(results)
+  def print_game_result(results)
     puts "ディーラーの得点は#{@table.calculate_score(@table.dealer)}点でした。"
     sleep SLEEP_SECOND
     results.each do |result|
-      puts result[:message]
+      puts result.message
       sleep SLEEP_SECOND
     end
   end
 end
 
 blackjack = Blackjack.new
-blackjack.handle_game_flow("initial")
+blackjack.handle_game_flow
