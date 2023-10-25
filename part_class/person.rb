@@ -19,6 +19,15 @@ class Person
     @chip -= bet_amount
   end
 
+  def double_down_bet
+    @chip -= @bets
+    @bets *= 2
+  end
+
+  def can_double_down?
+    @action_count.zero? && chip >= bets
+  end
+
   def show_points
     puts "#{name}の現在の所持ポイントは#{chip}です。"
   end

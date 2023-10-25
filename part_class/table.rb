@@ -48,6 +48,11 @@ class Table
         deal_out_card(person)
 
         break if person.state == "bust"
+      elsif decide == "Double Down"
+        puts "#{person.name}は追加のポイントをbetしました。"
+        person.double_down_bet
+        deal_out_card(person)
+        break
       else
         break
       end
