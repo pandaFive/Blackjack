@@ -12,6 +12,7 @@ class Table
   def initialize
     @dealer = Dealer.new
     @players = create_players(2)
+    initialize_table
   end
 
   def initialize_table
@@ -61,6 +62,25 @@ class Table
 
   def calculate_score(person)
     person.hands.calculate_score
+  end
+
+  def calculate_bet_payment(results)
+    results.each do |result|
+      person = result.person
+      if result.is_win
+        person.add_chip_win
+      # 引き分けかSurrender
+      elsif result.is_win == nil
+        if person.state == "Surrender"
+          person.add_chip_surrender
+        else
+          person.add_chip_draw
+        end
+      end
+      person.reset_bets
+      person.show_points
+      sleep SLEEP_SECOND
+    end
   end
 
   private

@@ -7,7 +7,7 @@ require_relative "./part_class/game_result.rb"
 class Blackjack
   def initialize
     @table = Table.new
-    @phase = "bet"
+    @phase = "continue"
     handle_game_flow
   end
 
@@ -15,18 +15,18 @@ class Blackjack
     def handle_game_flow
       while true
         case @phase
-        when "initial"
-          @phase = initial_deal_phase
-        when "bet"
-          @phase = bet_phase
-        when "player"
-          @phase = player_phase
-        when "dealer"
-          @phase = dealer_phase
-        when "attribute"
-          @phase = attribute_win_lose_phase
         when "continue"
-          @phase = continue_phase
+          bet_phase
+        when "bet"
+          initial_deal_phase
+        when "deal"
+          player_phase
+        when "player"
+          dealer_phase
+        when "dealer"
+          attribute_win_lose_phase
+        when "attribute"
+          continue_phase
         else
           puts "ブラックジャックを終了します。"
           return
@@ -34,34 +34,32 @@ class Blackjack
       end
     end
 
-    def initial_deal_phase
-      puts "最初の手札を配ります。"
-      sleep SLEEP_SECOND
-      @table.initial_deal
-
-      "player"
-    end
-
     def bet_phase
+      @phase = "bet"
       puts "ブラックジャックを開始します。"
       sleep SLEEP_SECOND
       @table.initialize_table
 
       @table.players.each { |player| player.bet }
+    end
 
-      "initial"
+    def initial_deal_phase
+      @phase = "deal"
+      puts "最初の手札を配ります。"
+      sleep SLEEP_SECOND
+      @table.initial_deal
     end
 
     def player_phase
+      @phase = "player"
       sleep SLEEP_SECOND
 
       # アクション選択を繰り返す処理
       @table.players.each { |player| @table.repeated_decide(player) }
-
-      "dealer"
     end
 
     def dealer_phase
+      @phase = "dealer"
       dealer = @table.dealer
 
       dealer.show_second_card
@@ -73,28 +71,37 @@ class Blackjack
 
       # アクション選択を繰り返す処理
       @table.repeated_decide(dealer)
-
-      "attribute"
     end
 
     def attribute_win_lose_phase
-      # results = @table.players.reduce([]) { |array, player| array.push(@table.determine_winner(player)) }
+      @phase = "attribute"
       results = @table.players.reduce([]) { |array, player| array.push(GameResult.new(@table.dealer, player)) }
 
       print_game_result(results)
-      calculate_bet_payment(results)
+      @table.calculate_bet_payment(results)
       sleep SLEEP_SECOND
-      "continue"
     end
 
     def continue_phase
+      @phase = "continue"
       puts ""
+      if can_continue?
+        ask_continue
+      end
+    end
+
+    def can_continue?
       @table.players.each do |player|
         if player.chip.zero?
           puts "#{player.name}の所持ポイントが0になりました。\nこれ以上ゲームを続けることはできません。"
-          return "end"
+          @phase = "end"
+          return false
         end
       end
+      true
+    end
+
+    def ask_continue
       puts "ゲームを続けますか？(y/n)："
       yes_or_no = gets.chomp
 
@@ -103,30 +110,7 @@ class Blackjack
         yes_or_no = gets.chomp
       end
 
-      if yes_or_no == "y"
-        "bet"
-      else
-        "end"
-      end
-    end
-
-    def calculate_bet_payment(results)
-      results.each do |result|
-        person = result.person
-        if result.is_win
-          person.add_chip(person.bets * 2)
-        # 引き分けかSurrender
-        elsif result.is_win == nil
-          if person.state == "Surrender"
-            person.add_chip((person.bets / 2).to_i)
-          else
-            person.add_chip(person.bets)
-          end
-        end
-        person.reset_bets
-        person.show_points
-        sleep SLEEP_SECOND
-      end
+      @phase = "end" if yes_or_no == "n"
     end
 
     def print_game_result(results)

@@ -7,7 +7,7 @@ class Person
   attr_reader :name, :state, :hands, :chip, :bets
   def initialize(name)
     @name = name
-    @state = "init"
+    @state = ""
     @hands = Hands.new
     @chip = 10000
     @bets = 0
@@ -31,6 +31,7 @@ class Person
   def initialize_person
     hands.clear_hand
     @action_count = 0
+    @state = ""
     reset_bets
   end
 
@@ -40,6 +41,18 @@ class Person
 
   def reset_bets
     @bets = 0
+  end
+
+  def add_chip_surrender
+    add_chip((bets / 2).floor)
+  end
+
+  def add_chip_win
+    add_chip(bets * 2)
+  end
+
+  def add_chip_draw
+    add_chip(bets)
   end
 
   def add_chip(point)
