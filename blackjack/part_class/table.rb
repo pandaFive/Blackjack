@@ -36,6 +36,7 @@ class Table
     end
   end
 
+  # TODO:一応変更完了
   def repeated_decide(person)
     while true
       decide = person.is_a?(CPU) ? person.decide_action(dealer.get_up_card_score) : person.decide_action
@@ -48,11 +49,14 @@ class Table
       if decide == "Hit"
         deal_out_card(person)
 
-        break if person.state == "bust"
+        break if person.hands.state == "bust"
       elsif decide == "Double Down"
         puts "#{person.name}は追加のポイントをbetしました。"
         person.double_down_bet
         deal_out_card(person)
+        break
+      elsif decide == "Split"
+        behavior_split(person)
         break
       else
         break
@@ -60,25 +64,43 @@ class Table
     end
   end
 
+  def behavior_split(person)
+    person.split_hands
+    puts "#{person.name}は追加のポイントをbetしました。"
+    current_length = person.hands_number
+
+    person.get_hands_index.upto(person.hands_number - 1) do |num|
+      puts "#{person.name}の#{num + 1}つ目の手札に追加のカードを配ります。"
+      sleep SLEEP_SECOND
+      deal_out_card(person)
+      repeated_decide(person)
+      sleep SLEEP_SECOND
+      person.switching_hands
+      break if current_length != person.hands_number
+    end
+  end
+
   def calculate_score(person)
     person.hands.calculate_score
   end
 
+  # TODO:この関数も後でいじる必要あり
   def calculate_bet_payment(results)
-    results.each do |result|
-      person = result.person
-      if result.is_win
-        person.add_chip_win
-      # 引き分けかSurrender
-      elsif result.is_win == nil
-        if person.state == "Surrender"
-          person.add_chip_surrender
-        else
-          person.add_chip_draw
+    results.each do |player|
+      player.each do |result|
+        target_player = result.person
+        if result.is_win
+          target_player.add_chip_win
+        # 引き分けかSurrender
+        elsif result.is_win == nil
+          if result.state == "Surrender"
+            target_player.add_chip_surrender
+          else
+            target_player.add_chip_draw
+          end
         end
       end
-      person.reset_bets
-      person.show_points
+      player[0].person.show_points
       sleep SLEEP_SECOND
     end
   end

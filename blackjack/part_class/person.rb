@@ -4,55 +4,55 @@ require_relative "../../config/application.rb"
 require_relative "./hands.rb"
 
 class Person
-  attr_reader :name, :state, :hands, :chip, :bets
+  attr_reader :name, :hands, :chip, :hands_array
   def initialize(name)
     @name = name
-    @state = ""
     @hands = Hands.new
+    @hands_array = [@hands]
     @chip = 10000
-    @bets = 0
-    @action_count = 0
   end
 
   def bet(bet_amount)
-    @bets = bet_amount
+    @hands.bet(bet_amount)
     @chip -= bet_amount
   end
 
   def double_down_bet
-    @chip -= @bets
-    @bets *= 2
+    @chip -= @hands.bets
+    @hands.double_down_bet
   end
 
   def can_double_down?
-    @action_count.zero? && chip >= bets
+    @hands.length == 2 && @chip >= @hands.bets
+  end
+
+  def can_surrender?
+    @hands_array.length == 1 && hands.length == 2
+  end
+
+  def can_split?
+    @hands.can_split? && can_double_down?
   end
 
   def initialize_person
-    hands.clear_hand
-    @action_count = 0
-    @state = ""
-    reset_bets
+    @hands = Hands.new
+    @hands_array = [@hands]
   end
 
   def show_points
-    puts "#{name}の現在の所持ポイントは#{chip}です。"
-  end
-
-  def reset_bets
-    @bets = 0
+    puts "#{name}の現在の所持ポイントは#{@chip}です。"
   end
 
   def add_chip_surrender
-    add_chip((bets / 2).floor)
+    add_chip((@hands.bets / 2).floor)
   end
 
   def add_chip_win
-    add_chip(bets * 2)
+    add_chip(@hands.bets * 2)
   end
 
   def add_chip_draw
-    add_chip(bets)
+    add_chip(@hands.bets)
   end
 
   def add_chip(point)
@@ -75,7 +75,7 @@ class Person
     score = @hands.calculate_score
 
     if score > NUMBER_OF_BLACKJACK
-      @state = "bust"
+      @hands.state = "bust"
 
       puts "#{@name}はbustしました。"
     end
@@ -83,8 +83,34 @@ class Person
     sleep SLEEP_SECOND
   end
 
+  def switching_hands
+    return if @hands_array.length == 1
+    current_index = @hands_array.index(@hands)
+    if current_index == @hands_array.length - 1
+      @hands = @hands_array[0]
+    else
+      @hands = @hands_array[current_index + 1]
+    end
+  end
+
   def to_s
     "#{@name}: #{@state}"
+  end
+
+  def split_hands
+    new_hands = Hands.new
+    @hands_array.push(new_hands)
+    new_hands.add_card(@hands.pop_card)
+    new_hands.bet(@hands.bets)
+    @chip -= new_hands.bets
+  end
+
+  def get_hands_index
+    @hands_array.index(@hands)
+  end
+
+  def hands_number
+    @hands_array.length
   end
 
   def score_call

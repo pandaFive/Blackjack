@@ -3,15 +3,22 @@
 require_relative "./card.rb"
 
 class Hands
-  attr_reader :hands
+  attr_reader :hands, :bets, :state
+  attr_writer :state
   def initialize
     @hands = []
+    @bets = 0
+    @state = ""
   end
 
   def add_card(card)
     return unless card.is_a?(Card)
 
     @hands.push(card)
+  end
+
+  def bet(bet_amount)
+    @bets = bet_amount
   end
 
   def calculate_score
@@ -37,16 +44,32 @@ class Hands
     end
   end
 
+  def can_split?
+    @hands.length == 2 && [@hands[0].rank, 10].min == [@hands[1].rank, 10].min
+  end
+
   def clear_hand
     @hands = []
+  end
+
+  def double_down_bet
+    @bets *= 2
   end
 
   def empty?
     @hands.empty?
   end
 
+  def length
+    @hands.length
+  end
+
+  def pop_card
+    @hands.pop
+  end
+
   def has_A?
-    hands.any? { |card| card.rank == 1 }
+    @hands.any? { |card| card.rank == 1 }
   end
 
   def to_s
