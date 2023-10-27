@@ -10,20 +10,31 @@ class Player < Person
 
   def bet
     sleep SLEEP_SECOND
-    puts "1~#{chip}の範囲で賭けるポイントを入力してください："
+    puts "1~#{@chip}の範囲で賭けるポイントを入力してください："
     bet_amount = gets.chomp.to_i
 
-    while bet_amount < 1 || bet_amount > chip
-      puts "1~#{chip}の範囲で賭けるポイントを入力してください："
+    while bet_amount < 1 || bet_amount > @chip
+      puts "1~#{@chip}の範囲で賭けるポイントを入力してください："
       bet_amount = gets.chomp.to_i
     end
     @chip -= bet_amount
-    @bets = bet_amount
+    @hands.bet(bet_amount)
+  end
+
+  def create_action_message
+    message = if @hands_array.length >= 2
+      "#{@name}の#{@hands_array.index(@hands) + 1}つ目の手札"
+    else
+      "#{@name}"
+    end
+    message += "の現在の得点は#{@hands.calculate_score}です。行動を選択してください(#{get_available_options.join("/")})："
+
+    message
   end
 
   def decide_action
     available_options = get_available_options
-    puts "#{@name}の現在の得点は#{@hands.calculate_score}です。行動を選択してください(#{ available_options.join("/") })："
+    puts create_action_message
     decide = gets.chomp
 
     while !action_validator(decide)
@@ -31,9 +42,7 @@ class Player < Person
       decide = gets.chomp
     end
 
-    @action_count += 1
-
-    @state = decide
+    hands.state = decide
 
     decide
   end
@@ -46,7 +55,7 @@ class Player < Person
     score = @hands.calculate_score
 
     if score > NUMBER_OF_BLACKJACK
-      @state = "bust"
+      @hands.state = "bust"
 
       puts "#{@name}はbustしました。"
     end
@@ -57,8 +66,9 @@ class Player < Person
   private
     def get_available_options
       actions = ["Hit", "Stand"]
-      actions.push("Surrender") if @action_count.zero?
+      actions.push("Surrender") if can_surrender?
       actions.push("Double Down") if can_double_down?
+      actions.push("Split") if can_split?
       actions
     end
 

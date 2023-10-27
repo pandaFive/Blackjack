@@ -75,11 +75,25 @@ class Blackjack
 
     def attribute_win_lose_phase
       @phase = "attribute"
-      results = @table.players.reduce([]) { |array, player| array.push(GameResult.new(@table.dealer, player)) }
+      # TODO:この処理をいじる必要がある。
+      # results = @table.players.reduce([]) { |array, player| array.push(GameResult.new(@table.dealer, player)) }
+      # TODO:新しいverの処理検査が必要。メソッドにしよう
+      results = create_results
 
       print_game_result(results)
       @table.calculate_bet_payment(results)
       sleep SLEEP_SECOND
+    end
+
+    def create_results
+      @table.players.reduce([]) do |array, player|
+        hands_results = player.hands_array.reduce([]) do |player_results, a_hand|
+          player_results.push(GameResult.new(@table.dealer, player))
+          player.switching_hands
+          player_results
+        end
+        array.push(hands_results)
+      end
     end
 
     def continue_phase
@@ -116,9 +130,11 @@ class Blackjack
     def print_game_result(results)
       puts "ディーラーの得点は#{@table.calculate_score(@table.dealer)}点でした。"
       sleep SLEEP_SECOND
-      results.each do |result|
-        puts result.message
-        sleep SLEEP_SECOND
+      results.each do |person|
+        person.each do |result|
+          puts result.message
+          sleep SLEEP_SECOND
+        end
       end
     end
 end
