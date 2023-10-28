@@ -4,6 +4,7 @@ require_relative "./person.rb"
 require_relative "./person/dealer.rb"
 require_relative "./person/player.rb"
 
+# インスタンス変数 person, is_win, message, state
 class GameResult
   attr_reader :person, :is_win, :message, :state
 
@@ -34,7 +35,7 @@ class GameResult
       elsif player.is_bust?
         set_result(false, "#{destination}はbustしました。#{destination}の負けです。", @person.hands.state)
       elsif dealer.is_bust?
-        set_result(true, "#{dealer.name}はbustしました。#{destination}の勝ちです！", @person.hands.state)
+        set_result(true, "#{dealer.name}はbustしました。#{destination}の勝ちです！#{player.hands.bets * 2}ポイント獲得します。", @person.hands.state)
       else
         compare_scores(dealer, player)
       end

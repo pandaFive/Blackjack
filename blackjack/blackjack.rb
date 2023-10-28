@@ -75,9 +75,6 @@ class Blackjack
 
     def attribute_win_lose_phase
       @phase = "attribute"
-      # TODO:この処理をいじる必要がある。
-      # results = @table.players.reduce([]) { |array, player| array.push(GameResult.new(@table.dealer, player)) }
-      # TODO:新しいverの処理検査が必要。メソッドにしよう
       results = create_results
 
       print_game_result(results)
@@ -100,7 +97,7 @@ class Blackjack
       @phase = "continue"
       puts ""
       if can_continue?
-        ask_continue
+        @phase = "end" unless ask_continue
       end
     end
 
@@ -124,7 +121,7 @@ class Blackjack
         yes_or_no = gets.chomp
       end
 
-      @phase = "end" if yes_or_no == "n"
+      yes_or_no == "y"
     end
 
     def print_game_result(results)

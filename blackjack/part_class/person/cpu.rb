@@ -30,6 +30,7 @@ class CPU < Person
   end
 
   private
+    # split可能な時の判断
     def split_hand_decide(up_card_score)
       score = hands.calculate_score
       decide = if @hands.hands[0].rank == 1 || score == 16
@@ -74,6 +75,7 @@ class CPU < Person
       decide
     end
 
+    # 手札にAがないかもしくはAを1として扱う場合
     def hard_hand_decide(up_card_score)
       score = hands.calculate_score
       decide = if score <= 8

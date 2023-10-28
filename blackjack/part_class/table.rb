@@ -36,7 +36,6 @@ class Table
     end
   end
 
-  # TODO:一応変更完了
   def repeated_decide(person)
     while true
       decide = person.is_a?(CPU) ? person.decide_action(dealer.get_up_card_score) : person.decide_action
@@ -76,6 +75,7 @@ class Table
       repeated_decide(person)
       sleep SLEEP_SECOND
       person.switching_hands
+      # splitを2回以上行った時にこの関数を多重に呼び出して多重に手札の処理をすることを防ぐための処理
       break if current_length != person.hands_number
     end
   end
@@ -84,9 +84,14 @@ class Table
     person.hands.calculate_score
   end
 
-  # TODO:この関数も後でいじる必要あり
   def calculate_bet_payment(results)
+    # results = [[GameResult, GameResult], [GameResult], [GameResult]]
+    # results.length == table.players.length
+    # results[x].length == table.players[x].hands_array.length
+
+    # playerを取り出している
     results.each do |player|
+      # 手札ごとの結果を取り出している
       player.each do |result|
         target_player = result.person
         if result.is_win
