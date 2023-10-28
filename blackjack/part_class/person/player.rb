@@ -47,22 +47,6 @@ class Player < Person
     decide
   end
 
-  def receive_card(card)
-    @hands.add_card(card)
-
-    puts "#{@name}が引いたカードは#{card}です。"
-
-    score = @hands.calculate_score
-
-    if score > NUMBER_OF_BLACKJACK
-      @hands.state = "bust"
-
-      puts "#{@name}はbustしました。"
-    end
-
-    sleep SLEEP_SECOND
-  end
-
   private
     def get_available_options
       actions = ["Hit", "Stand"]
