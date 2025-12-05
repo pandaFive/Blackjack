@@ -83,13 +83,16 @@ class Blackjack
     end
 
     def create_results
-      @table.players.reduce([]) do |array, player|
-        hands_results = player.hands_array.reduce([]) do |player_results, a_hand|
-          player_results.push(GameResult.new(@table.dealer, player))
-          player.switching_hands
-          player_results
-        end
-        array.push(hands_results)
+      @table.players.map do |player|
+        create_player_results(player)
+      end
+    end
+
+    def create_player_results(player)
+      player.hands_array.map do
+        result = GameResult.new(@table.dealer, player)
+        player.switching_hands
+        result
       end
     end
 
