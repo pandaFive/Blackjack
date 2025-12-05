@@ -3,7 +3,7 @@
 class Card
   attr_reader :number, :suit, :rank
 
-  @@NUMBER_TABLE = {
+  NUMBER_TABLE = {
     1 => "A",
     2 => "2",
     3 => "3",
@@ -17,12 +17,12 @@ class Card
     11 => "J",
     12 => "Q",
     13 => "K"
-  }
+  }.freeze
 
   def initialize(rank, suit)
     @rank = rank
     @suit = suit
-    @number = @@NUMBER_TABLE[rank]
+    @number = NUMBER_TABLE[rank]
   end
 
   def to_s

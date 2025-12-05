@@ -20,12 +20,8 @@ class Dealer < Person
   end
 
   def get_up_card_score
-    score = hands.hands[0].rank
-    if score == 1
-      11
-    else
-      [10, score].min
-    end
+    up_card = hands.hands[0]
+    up_card.rank == 1 ? 11 : [10, up_card.rank].min
   end
 
   def show_second_card

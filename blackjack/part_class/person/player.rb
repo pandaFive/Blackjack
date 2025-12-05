@@ -22,14 +22,7 @@ class Player < Person
   end
 
   def create_action_message
-    message = if @hands_array.length >= 2
-      "#{@name}の#{@hands_array.index(@hands) + 1}つ目の手札"
-    else
-      "#{@name}"
-    end
-    message += "の現在の得点は#{@hands.calculate_score}です。行動を選択してください(#{get_available_options.join("/")})："
-
-    message
+    "#{player_identifier}の現在の得点は#{@hands.calculate_score}です。行動を選択してください(#{get_available_options.join("/")})："
   end
 
   def decide_action
@@ -48,6 +41,14 @@ class Player < Person
   end
 
   private
+    def player_identifier
+      if @hands_array.length >= 2
+        "#{@name}の#{@hands_array.index(@hands) + 1}つ目の手札"
+      else
+        @name
+      end
+    end
+
     def get_available_options
       actions = ["Hit", "Stand"]
       actions.push("Surrender") if can_surrender?

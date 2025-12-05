@@ -8,11 +8,8 @@ class Deck
   end
 
   def create_deck
-    %w[スペード クラブ ハート ダイヤ].reduce([]) do |deck, suit|
-      suit_part = (1..13).reduce([]) do |part, rank|
-        part.push(Card.new(rank, suit))
-      end
-      deck.concat(suit_part)
+    %w[スペード クラブ ハート ダイヤ].flat_map do |suit|
+      (1..13).map { |rank| Card.new(rank, suit) }
     end
   end
 
