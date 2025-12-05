@@ -9,12 +9,16 @@ class Hands
     @hands = []
     @bets = 0
     @state = ""
+    @cached_score = nil
+    @has_ace = false
   end
 
   def add_card(card)
     return unless card.is_a?(Card)
 
     @hands.push(card)
+    @cached_score = nil
+    @has_ace = true if card.rank == 1
   end
 
   def bet(bet_amount)
@@ -22,10 +26,12 @@ class Hands
   end
 
   def calculate_score
+    return @cached_score if @cached_score
+
     ace_count = count_aces
     base_score = calculate_base_score
 
-    optimize_ace_value(base_score, ace_count)
+    @cached_score = optimize_ace_value(base_score, ace_count)
   end
 
   def can_split?
@@ -34,6 +40,8 @@ class Hands
 
   def clear_hand
     @hands = []
+    @cached_score = nil
+    @has_ace = false
   end
 
   def double_down_bet
@@ -49,17 +57,18 @@ class Hands
   end
 
   def pop_card
-    @hands.pop
+    @cached_score = nil
+    popped = @hands.pop
+    @has_ace = @hands.any? { |card| card.rank == 1 } if popped&.rank == 1
+    popped
   end
 
   def has_A?
-    @hands.any? { |card| card.rank == 1 }
+    @has_ace
   end
 
   def to_s
-    @hands.reduce("") do |result, card|
-      result + "#{card.suit}の#{card.number} "
-    end
+    @hands.map { |card| "#{card.suit}の#{card.number}" }.join(" ")
   end
 
   private
