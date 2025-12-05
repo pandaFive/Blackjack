@@ -59,27 +59,10 @@ class Person
     @chip += point
   end
 
-  def decide_action
-    if @hands.calculate_score < 17
-      "Hit"
-    else
-      "Stand"
-    end
-  end
-
   def receive_card(card)
     @hands.add_card(card)
-
-    puts "#{name}の引いたカードは#{card}です。"
-
-    score = @hands.calculate_score
-
-    if score > NUMBER_OF_BLACKJACK
-      @hands.state = "bust"
-
-      puts "#{@name}はbustしました。"
-    end
-
+    display_received_card(card)
+    check_and_handle_bust
     sleep SLEEP_SECOND
   end
 
@@ -119,5 +102,18 @@ class Person
 
   def is_bust?
     hands.calculate_score > NUMBER_OF_BLACKJACK
+  end
+
+  private
+
+  def display_received_card(card)
+    puts "#{name}の引いたカードは#{card}です。"
+  end
+
+  def check_and_handle_bust
+    return unless is_bust?
+
+    @hands.state = "bust"
+    puts "#{@name}はbustしました。"
   end
 end

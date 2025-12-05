@@ -31,4 +31,12 @@ class Dealer < Person
   def show_second_card
     puts "ディーラーの引いた2枚目のカードは#{@hands.hands[1]}でした。"
   end
+
+  def decide_action
+    if @hands.calculate_score < 17
+      "Hit"
+    else
+      "Stand"
+    end
+  end
 end

@@ -112,15 +112,18 @@ class CPU < Person
     def soft_hand_decide(up_card_score)
       score = hands.calculate_score
 
-      decide = if can_double_down? && score <= 18
-        if up_card_score == 5 && up_card_score == 6
-          "Double Down"
-        elsif up_card_score == 4 && score >= 15
-          "Double Down"
-        elsif up_card_score == 3 && score >= 17
-          "Double Down"
+      # ダブルダウン可能な場合、戦略に基づいて判断
+      if can_double_down? && score <= 18
+        if (up_card_score == 5 || up_card_score == 6) ||
+           (up_card_score == 4 && score >= 15) ||
+           (up_card_score == 3 && score >= 17)
+          @hands.state = "Double Down"
+          return "Double Down"
         end
-      elsif score <= 17
+      end
+
+      # 通常のソフトハンド戦略
+      decide = if score <= 17
         "Hit"
       elsif score >= 19
         "Stand"
@@ -131,7 +134,6 @@ class CPU < Person
       end
 
       @hands.state = decide
-
       decide
     end
 end
